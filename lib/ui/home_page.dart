@@ -10,6 +10,9 @@ class _HomePageState extends State<HomePage> {
   // because of the singleton attribute
 
 
+  List <Contact> contacts = [];
+
+
   Future<void> _saveTestUser()async{
     Contact contact = Contact("Test", "test@email.com");
 
@@ -23,7 +26,9 @@ class _HomePageState extends State<HomePage> {
     _saveTestUser();
 
     helper.getAllContacts().then((list){
-      print(list);
+      setState(() {
+        contacts = list;
+      });
     });
   }
 
@@ -48,8 +53,24 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text("Contatos", style: TextStyle(fontSize: 34),),
+            ListView.separated(
+              itemBuilder: (context, index){
+                return Container();
+              }, 
+              separatorBuilder: (context, index){
+                return SizedBox(height: 8,);
+              },  
+              itemCount: contacts.length
+            )
           ]
         )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed:(){
+        } ,
+        backgroundColor: Colors.red,
+        child: Icon(Icons.add, size: 20,),
       ),
     );
   }
