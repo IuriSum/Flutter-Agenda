@@ -29,7 +29,7 @@ class ContactHelper {
 
   Future<Database> initDb()async{
     final String databasesPath = await getDatabasesPath();
-    final String path = "${databasesPath}contacts.db";
+    final String path = "${databasesPath}contacts2.db";
 
     return openDatabase(path, version: 1, onCreate: (Database db, int newerVersion)async{
       String query = '''
