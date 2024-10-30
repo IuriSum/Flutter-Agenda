@@ -10,9 +10,17 @@ class _HomePageState extends State<HomePage> {
   // because of the singleton attribute
 
 
+  Future<void> _saveTestUser()async{
+    Contact contact = Contact("Test", "test@email.com");
+
+    helper.saveContact(contact);
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _saveTestUser();
 
     helper.getAllContacts().then((list){
       print(list);
