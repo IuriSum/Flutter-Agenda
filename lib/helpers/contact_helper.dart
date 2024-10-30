@@ -1,5 +1,3 @@
-
-
 import 'package:sqflite/sqflite.dart';
 
 final String contactTable = "contactTable";
@@ -48,6 +46,65 @@ class ContactHelper {
       );
     });
   }
+
+  Future<Contact> saveContact(Contact contact)async{
+    Database database = await db;
+    contact.id = await database.insert(contactTable, contact.toMap());
+    return contact;
+  }
+
+  Future<Contact?> getContact(int id)async{
+    Database database = await db;
+    List<Map<String,dynamic>> result = await database.query(
+      contactTable,
+      columns: [idColumn, nameColumn, emailColumn, phoneColumn, imgColumn],
+      where: "$idColumn = ?",
+      whereArgs: [id]
+    );
+
+    if(result.isNotEmpty){
+      return Contact.fromMap(result.first);
+    }
+    
+    return null;
+  }
+
+  Future<Contact> updateContact(Contact contact)async{
+    Database database = await db;
+    await database.update(
+      contactTable, 
+      contact.toMap(),
+      where: "$idColumn = ?",
+      whereArgs: [contact.id]
+    );
+    return contact;
+  }
+
+  Future<int> deleteContact(int id)async{
+    Database database = await db;
+    return await database.delete(
+      contactTable,
+      where: "$idColumn = ?",
+      whereArgs: [id]
+    );
+  }
+
+  Future<List<Contact>> getAllContacts()async{
+    Database database = await db;
+    List <Map<String, dynamic>> contactQuery = await database.rawQuery('SELECT*FROM $contactTable');
+    return List.generate(contactQuery.length, (index) => Contact.fromMap(contactQuery[index]));
+  }
+
+  Future <int?> getNumber() async {
+    Database database = await db;
+    return Sqflite.firstIntValue(await database.rawQuery("SELECT COUNT(*) FROM $contactTable"));
+  }
+
+  Future<void> close()async{
+    Database database = await db;
+    database.close();
+  }
+
 }
 
 class Contact {
@@ -65,7 +122,7 @@ class Contact {
     img = map[imgColumn];
   }
 
-  Map toMap(){
+  Map<String,dynamic> toMap(){
     Map<String, dynamic> map = {
       nameColumn: name,
       emailColumn: email,
